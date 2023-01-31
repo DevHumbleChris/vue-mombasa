@@ -1256,6 +1256,11 @@ rimraf@^3.0.2:
   dependencies:
     glob "^7.1.3"
 
+rimraf@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-4.1.2.tgz#20dfbc98083bdfaa28b01183162885ef213dbf7c"
+  integrity sha512-BlIbgFryTbw3Dz6hyoWFhKk+unCcHMSkZGrTFVAx2WmttdBSonsdtRlwiuTbDqTKr+UlXIUqJVS4QT5tUzGENQ==
+
 rollup@^3.7.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.12.0.tgz#813d88ec11e36108da788fc471b3c81b365a7c29"
@@ -1437,6 +1442,13 @@ vue-router@^4.1.6:
   integrity sha512-DYWYwsG6xNPmLq/FmZn8Ip+qrhFEzA14EI12MsMgVxvHFDYvlr4NXpVF5hrRH1wVcDP8fGi5F4rxuJSl8/r+EQ==
   dependencies:
     "@vue/devtools-api" "^6.4.5"
+
+vue3-toastify@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/vue3-toastify/-/vue3-toastify-0.0.5.tgz#a546e089142b7f023b86c5c93ca8a697a651dc8c"
+  integrity sha512-hKHDg1MA5G+FdKYks8QbC52ejCwkc+epou7RZUocJcSIpvUkzsLznhv0MrgsKr0eDKtMeU3z9khsWsd9fCplow==
+  dependencies:
+    rimraf "^4.1.2"
 
 vue@^3.2.45:
   version "3.2.45"

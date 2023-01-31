@@ -17,6 +17,6 @@ import './assets/main.css'
 const app = createApp(App)
 
 app.use(createPinia())
-app.component('FontAweasomeIcon', FontAwesomeIcon)
+app.component('FontAwesomeIcon', FontAwesomeIcon)
 app.use(router)
 app.mount('#app')
