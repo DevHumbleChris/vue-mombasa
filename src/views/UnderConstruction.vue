@@ -1,8 +1,11 @@
 <script setup>
 import ConstructionSVG from '@/components/svg/ConstructionSVG.vue';
 import { onMounted, ref } from 'vue';
+import { toast } from 'vue3-toastify';
 
-const countDownDate = ref(new Date("Feb 20, 2023 19:30:00").getTime())
+const email = ref('')
+
+const countDownDate = ref(new Date("Feb 25, 2023 19:30:00").getTime())
 const days = ref(0)
 const hours = ref(0)
 const minutes = ref(0)
@@ -26,6 +29,20 @@ const startTimer = () => {
     hours.value = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
     minutes.value = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
     seconds.value = Math.floor((distance % (1000 * 60)) / 1000)
+}
+
+const joinEmailList = () => {
+    if (!email.value) {
+        toast('Email is required! Please provide one.', {
+            type: 'warning',
+            theme: 'colored'
+        })
+    } else {
+        toast('Email Received. Happy to see you onboard!', {
+            type: 'info',
+            theme: 'colored'
+        })
+    }
 }
 </script>
 
@@ -61,7 +78,7 @@ const startTimer = () => {
                     ready.
                 </p>
                 <a href="https://chat.whatsapp.com/CtNmD8cpogJLvzkh0AonO8"
-                    class="flex items-center justify-center w-full sm:w-auto px-8 py-3 sm:text-sm text-base sm:py-3.5 font-semibold text-white transition-all duration-200 bg-secondary rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2  my-4 focus:ring-gray-900">
+                    class="flex space-x-3 items-center justify-center w-full sm:w-auto px-8 py-3 sm:text-sm text-base sm:py-3.5 font-semibold text-white transition-all duration-200 bg-secondary rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2  my-4 focus:ring-gray-900">
                     <FontAwesomeIcon :icon="['fab', 'whatsapp']" class="text-white w-6 h-6" />
                     <p>Join Our WhatsApp Group</p>
                 </a>
@@ -70,7 +87,8 @@ const startTimer = () => {
                     <p>Or</p>
                     <div class="w-full h-[3px] bg-primary"></div>
                 </div>
-                <div class="relative my-4 mx-auto max-w-lg space-y-4 sm:flex sm:space-y-0 sm:items-end">
+                <form @submit.prevent="joinEmailList"
+                    class="relative my-4 mx-auto max-w-lg space-y-4 sm:flex sm:space-y-0 sm:items-end">
                     <div class="flex-1">
                         <label for="" class="sr-only">Email address</label>
                         <div>
@@ -79,11 +97,11 @@ const startTimer = () => {
                                 placeholder="Enter email address" />
                         </div>
                     </div>
-                    <button type="button"
-                        class="inline-flex items-center justify-center w-full sm:w-auto px-8 py-3 sm:text-sm text-base sm:py-3.5 font-semibold text-white transition-all duration-200 bg-secondary border border-transparent rounded-lg sm:rounded-r-lg sm:rounded-l-none hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+                    <button type="submit"
+                        class="inline-flex items-center justify-center w-full sm:w-auto px-8 py-3 sm:text-sm text-lg sm:py-3.5 font-semibold text-white transition-all duration-200 bg-secondary border border-transparent rounded-lg sm:rounded-r-lg sm:rounded-l-none hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
                         Join Email List
                     </button>
-                </div>
+                </form>
             </div>
         </div>
     </section>
