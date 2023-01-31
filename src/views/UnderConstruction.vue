@@ -91,9 +91,9 @@ const joinEmailList = () => {
                 <form @submit.prevent="joinEmailList"
                     class="relative my-4 mx-auto max-w-lg space-y-4 sm:flex sm:space-y-0 sm:items-end">
                     <div class="flex-1">
-                        <label for="" class="sr-only">Email address</label>
+                        <label for="email" class="sr-only">Email address</label>
                         <div>
-                            <input type="email" name="" id=""
+                            <input type="email" v-model="email" id="email" autocomplete="off"
                                 class="block w-full px-4 py-3 sm:py-3.5 text-base font-medium text-gray-900 placeholder-gray-500 border border-gray-300 rounded-lg sm:rounded-l-lg sm:rounded-r-none sm:text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                                 placeholder="Enter email address" />
                         </div>
