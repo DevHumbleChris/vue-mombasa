@@ -60,10 +60,13 @@ const startTimer = () => {
                         Vue Mombasa Community</span> website is opening soon! Please register to notify you when it's
                     ready.
                 </p>
-                <button h type="button"
-                    class="items-center justify-center w-full sm:w-auto px-8 py-3 sm:text-sm text-base sm:py-3.5 font-semibold text-white transition-all duration-200 bg-secondary rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2  my-4 focus:ring-gray-900">
-                    Join Our WhatsApp Group
-                </button>
+                <RouterLink to="https://chat.whatsapp.com/CtNmD8cpogJLvzkh0AonO8">
+                    <button type="button"
+                        class="items-center justify-center w-full sm:w-auto px-8 py-3 sm:text-sm text-base sm:py-3.5 font-semibold text-white transition-all duration-200 bg-secondary rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2  my-4 focus:ring-gray-900">
+                        <FontAweasomIcon :icon="['fab', 'whatsapp']" class="text-white" />
+                        Join Our WhatsApp Group
+                    </button>
+                </RouterLink>
                 <div class="flex items-center space-x-4 justify-center">
                     <div class="w-full h-[3px] bg-primary"></div>
                     <p>Or</p>
