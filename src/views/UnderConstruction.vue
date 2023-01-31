@@ -42,6 +42,7 @@ const joinEmailList = () => {
             type: 'info',
             theme: 'colored'
         })
+        email.value = ''
     }
 }
 </script>
