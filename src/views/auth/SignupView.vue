@@ -293,7 +293,8 @@ const addProfilePic = (e) => {
             focus:outline-none focus:ring-2 focus:ring-offset-2
             my-4
             focus:ring-gray-900">
-                <FontAwesomeIcon :icon="['fas', 'upload']" :class="{ 'animate-bounce': uploadingFile }" />
+                <FontAwesomeIcon v-if="uploadingFile" :icon="['fas', 'upload']"
+                    :class="{ 'animate-bounce': uploadingFile }" />
                 <span> {{ uploadingFile? 'Uploading Data': 'Register' }}</span>
             </button>
             <div>
