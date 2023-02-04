@@ -4,10 +4,14 @@ import { ref } from 'vue'
 import { toast } from 'vue3-toastify';
 import { signup } from '@/utils/formValidator'
 import { signInWithPopup, createUserWithEmailAndPassword, updateProfile } from '@firebase/auth';
-import { auth, githubProvider, googleProvider } from '../../firebaseConfig';
+import { auth, githubProvider, googleProvider, storage } from '../../firebaseConfig';
+import { ref as firebaseStorageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 
 const selectedFile = ref(null)
-const uploadingFile = ref(true)
+const uploadingFile = ref(false)
+const imageFileProgress = ref(0)
+const uploadeImageURL = ref(null)
+const imageUploadState = ref('')
 
 const formDetails = ref({
     email: '',
@@ -25,21 +29,79 @@ const handleSubmit = async () => {
                 type: 'warning',
                 theme: 'colored'
             })
+        } else {
+            // Activate Image Upload State.
+            uploadingFile.value = !uploadingFile.value
+
+            // Uploading Profile Pic
+            const storageRef = firebaseStorageRef(storage, `users/image/${formDetails.value.username}/`);
+            const uploadTask = uploadBytesResumable(storageRef, selectedFile.value);
+
+            await uploadTask.on('state_changed',
+                (snapshot) => {
+                    // Observe state change events such as progress, pause, and resume
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    imageFileProgress.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    switch (snapshot.state) {
+                        case 'paused':
+                            imageUploadState.value = 'Upload is paused'
+                            toast(imageUploadState.value, {
+                                type: 'info',
+                                theme: 'colored'
+                            })
+                            break;
+                        case 'running':
+                            imageUploadState.value = 'Upload is running'
+                            toast(imageUploadState.value, {
+                                type: 'info',
+                                theme: 'colored'
+                            })
+                            break;
+                    }
+                },
+                (error) => {
+                    // Handle unsuccessful uploads
+                    toast(error.message, {
+                        type: 'error',
+                        theme: 'colored'
+                    })
+                },
+                () => {
+                    // Handle successful uploads on complete
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        // Set downloadURL
+                        uploadeImageURL.value = downloadURL
+                    });
+                }
+            )
+            // Create New User.
+            await createUserWithEmailAndPassword(auth, formDetails.value.email, formDetails.value.password)
+            updateProfile({
+                displayName: formDetails.value.username,
+                photoURL: uploadeImageURL.value ? uploadeImageURL.value : 'https://avatars.dicebear.com/api/avataaars/Lorna-Christiansen.svg'
+            })
+            // Activate Image Upload State.
+            uploadingFile.value = !uploadingFile.value
+
+            // Reset to defaults.
+            formDetails.value = {
+                email: '',
+                password: '',
+                username: ''
+            }
+            uploadeImageURL.value = null
+            selectedFile.value = null
+            imageFileProgress.value = 0
+            uploadeImageURL.value = null
+            imageUploadState.value = ''
+
+            toast('Signin Successful', {
+                type: 'info',
+                theme: 'colored'
+            })
         }
 
-        // Create New User.
-        await createUserWithEmailAndPassword(auth, formDetails.value.email, formDetails.value.password)
-        updateProfile({
-            displayName: formDetails.value.username
-        })
-        formDetails.value = {
-            email: '',
-            password: ''
-        }
-        toast('Signin Successful', {
-            type: 'info',
-            theme: 'colored'
-        })
+
     } catch (error) {
         toast(error.message, {
             type: 'warning',
@@ -146,12 +208,12 @@ const addProfilePic = (e) => {
                         </div>
                         <div class="text-right">
                             <span class="text-xs font-semibold inline-block text-primary">
-                                30%
+                                {{ imageFileProgress }}%
                             </span>
                         </div>
                     </div>
                     <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
-                        <div style="width:30%"
+                        <div :style="{ width: imageFileProgress + '%' }"
                             class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary">
                         </div>
                     </div>
@@ -231,8 +293,8 @@ const addProfilePic = (e) => {
             focus:outline-none focus:ring-2 focus:ring-offset-2
             my-4
             focus:ring-gray-900">
-                <FontAwesomeIcon :icon="['fas', 'upload']" :class="{  'animate-bounce': uploadingFile }"/>
-                <span> {{ uploadingFile ? 'Uploading Data': 'Register' }}</span>
+                <FontAwesomeIcon :icon="['fas', 'upload']" :class="{ 'animate-bounce': uploadingFile }" />
+                <span> {{ uploadingFile? 'Uploading Data': 'Register' }}</span>
             </button>
             <div>
                 <div class="flex items-center space-x-4 justify-center">
