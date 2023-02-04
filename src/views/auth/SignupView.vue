@@ -7,6 +7,7 @@ import { signInWithPopup, createUserWithEmailAndPassword, updateProfile } from '
 import { auth, githubProvider, googleProvider } from '../../firebaseConfig';
 
 const selectedFile = ref(null)
+const uploadingFile = ref(true)
 
 const formDetails = ref({
     email: '',
@@ -134,7 +135,29 @@ const addProfilePic = (e) => {
                     class="focus:outline-none block w-full rounded-md border border-gray-300 bg-transparent px-4 py-2 text-gray-600 transition duration-300 focus:ring-2 focus:ring-secondary" />
             </div>
 
-            <div v-if="!selectedFile">
+            <div v-if="uploadingFile">
+                <div class="relative pt-1">
+                    <div class="flex mb-2 items-center justify-between">
+                        <div>
+                            <span
+                                class="text-xs font-semibold inline-block p-2 uppercase rounded-md text-white bg-primary">
+                                Uploading Profile Pic
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-semibold inline-block text-primary">
+                                30%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+                        <div style="width:30%"
+                            class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-else-if="!selectedFile">
                 <label class="block text-secondary">Profile Photo</label>
                 <div
                     class="mt-1 flex justify-center rounded-md border-2 hover:border-secondary border-dashed border-gray-300 px-6 pt-5 pb-4">
@@ -187,7 +210,7 @@ const addProfilePic = (e) => {
                     <img :src="selectedFile" :alt="formDetails.username" class="object-fit">
                 </div>
             </div>
-            <button type="submit" class="mx-auto
+            <button type="submit" :disabled="uploadingFile" class="mx-auto
             flex
             space-x-3
             items-center
@@ -207,7 +230,10 @@ const addProfilePic = (e) => {
             hover:bg-gray-700
             focus:outline-none focus:ring-2 focus:ring-offset-2
             my-4
-            focus:ring-gray-900">Register</button>
+            focus:ring-gray-900">
+                <FontAwesomeIcon :icon="['fas', 'upload']" :class="{  'animate-bounce': uploadingFile }"/>
+                <span> {{ uploadingFile ? 'Uploading Data': 'Register' }}</span>
+            </button>
             <div>
                 <div class="flex items-center space-x-4 justify-center">
                     <div class="w-full h-[3px] bg-primary"></div>
