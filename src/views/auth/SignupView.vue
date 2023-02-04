@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, useRouter } from 'vue-router';
-import { ref, onMounted } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import { toast } from 'vue3-toastify';
 import { signup } from '@/utils/formValidator'
 import { signInWithPopup, createUserWithEmailAndPassword, updateProfile } from '@firebase/auth';
@@ -18,7 +18,7 @@ const formDetails = ref({
     username: ''
 })
 
-onMounted(() => {
+onBeforeMount(() => {
     if (auth.currentUser) {
         router.push({ name: 'under-construction' })
     }

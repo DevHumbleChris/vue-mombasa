@@ -9,12 +9,12 @@ import { getStorage } from 'firebase/storage'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC4bD2Kyi-WmilhXD5jZQEUVY0bq9ypZHw",
-  authDomain: "vue-mombasa-ke.firebaseapp.com",
-  projectId: "vue-mombasa-ke",
-  storageBucket: "vue-mombasa-ke.appspot.com",
-  messagingSenderId: "314329845421",
-  appId: "1:314329845421:web:d90fb3e5cf0a8c7e240024"
+  apiKey: import.meta.env.VITE_APP_API_KEY,
+  authDomain: import.meta.env.VITE_APP_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_APP_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_APP_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_APP_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_APP_ID
 };
 
 // Initialize Firebase
