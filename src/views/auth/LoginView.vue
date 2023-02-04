@@ -1,15 +1,23 @@
 <script setup>
-import { RouterLink } from 'vue-router';
-import { ref } from 'vue'
+import { RouterLink, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue'
 import { toast } from 'vue3-toastify';
 import { login } from '@/utils/formValidator'
 import { auth, googleProvider, githubProvider } from '@/firebaseConfig'
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 
+const router = useRouter()
+
 // Form Details State.
 const formDetails = ref({
     email: '',
     password: ''
+})
+
+onMounted(() => {
+    if (auth.currentUser) {
+        router.push({ name: 'under-construction' })
+    }
 })
 
 // Form Handler.

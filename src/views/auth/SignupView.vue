@@ -1,22 +1,27 @@
 <script setup>
-import { RouterLink } from 'vue-router';
-import { ref } from 'vue'
+import { RouterLink, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue'
 import { toast } from 'vue3-toastify';
 import { signup } from '@/utils/formValidator'
 import { signInWithPopup, createUserWithEmailAndPassword, updateProfile } from '@firebase/auth';
 import { auth, githubProvider, googleProvider, storage } from '../../firebaseConfig';
-import { ref as firebaseStorageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { ref as firebaseStorageRef, getDownloadURL, uploadString } from 'firebase/storage'
 
+const router = useRouter()
 const selectedFile = ref(null)
 const uploadingFile = ref(false)
-const imageFileProgress = ref(0)
 const uploadeImageURL = ref(null)
-const imageUploadState = ref('')
 
 const formDetails = ref({
     email: '',
     password: '',
     username: ''
+})
+
+onMounted(() => {
+    if (auth.currentUser) {
+        router.push({ name: 'under-construction' })
+    }
 })
 
 const handleSubmit = async () => {
@@ -33,53 +38,22 @@ const handleSubmit = async () => {
             // Activate Image Upload State.
             uploadingFile.value = !uploadingFile.value
 
-            // Uploading Profile Pic
-            const storageRef = firebaseStorageRef(storage, `users/image/${formDetails.value.username}/`);
-            const uploadTask = uploadBytesResumable(storageRef, selectedFile.value);
-
-            await uploadTask.on('state_changed',
-                (snapshot) => {
-                    // Observe state change events such as progress, pause, and resume
-                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                    imageFileProgress.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    switch (snapshot.state) {
-                        case 'paused':
-                            imageUploadState.value = 'Upload is paused'
-                            toast(imageUploadState.value, {
-                                type: 'info',
-                                theme: 'colored'
-                            })
-                            break;
-                        case 'running':
-                            imageUploadState.value = 'Upload is running'
-                            toast(imageUploadState.value, {
-                                type: 'info',
-                                theme: 'colored'
-                            })
-                            break;
-                    }
-                },
-                (error) => {
-                    // Handle unsuccessful uploads
-                    toast(error.message, {
-                        type: 'error',
-                        theme: 'colored'
-                    })
-                },
-                () => {
-                    // Handle successful uploads on complete
-                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        // Set downloadURL
-                        uploadeImageURL.value = downloadURL
-                    });
-                }
-            )
             // Create New User.
-            await createUserWithEmailAndPassword(auth, formDetails.value.email, formDetails.value.password)
-            updateProfile({
+            const userDocRef = await createUserWithEmailAndPassword(auth, formDetails.value.email, formDetails.value.password)
+
+            const imageRef = firebaseStorageRef(storage, `users/${userDocRef.user.uid}/images/profile`);
+            if (selectedFile.value) {
+                await uploadString(imageRef, selectedFile.value, "data_url").then(async () => {
+                    const downloadURL = await getDownloadURL(imageRef);
+                    uploadeImageURL.value = downloadURL
+                });
+            }
+
+            await updateProfile(userDocRef.user, {
                 displayName: formDetails.value.username,
-                photoURL: uploadeImageURL.value ? uploadeImageURL.value : 'https://avatars.dicebear.com/api/avataaars/Lorna-Christiansen.svg'
+                photoURL: uploadeImageURL.value ? uploadeImageURL.value : 'https://e7.pngegg.com/pngimages/628/677/png-clipart-giant-panda-bear-purple-panda-digital-logo-panda-avatar-purple-animals.png'
             })
+
             // Activate Image Upload State.
             uploadingFile.value = !uploadingFile.value
 
@@ -91,9 +65,7 @@ const handleSubmit = async () => {
             }
             uploadeImageURL.value = null
             selectedFile.value = null
-            imageFileProgress.value = 0
             uploadeImageURL.value = null
-            imageUploadState.value = ''
 
             toast('Signin Successful', {
                 type: 'info',
@@ -196,30 +168,7 @@ const addProfilePic = (e) => {
                 <input v-model="formDetails.username" type="text" name="username" id="username" autocomplete="off"
                     class="focus:outline-none block w-full rounded-md border border-gray-300 bg-transparent px-4 py-2 text-gray-600 transition duration-300 focus:ring-2 focus:ring-secondary" />
             </div>
-
-            <div v-if="uploadingFile">
-                <div class="relative pt-1">
-                    <div class="flex mb-2 items-center justify-between">
-                        <div>
-                            <span
-                                class="text-xs font-semibold inline-block p-2 uppercase rounded-md text-white bg-primary">
-                                Uploading Profile Pic
-                            </span>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xs font-semibold inline-block text-primary">
-                                {{ imageFileProgress }}%
-                            </span>
-                        </div>
-                    </div>
-                    <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
-                        <div :style="{ width: imageFileProgress + '%' }"
-                            class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div v-else-if="!selectedFile">
+            <div v-if="!selectedFile">
                 <label class="block text-secondary">Profile Photo</label>
                 <div
                     class="mt-1 flex justify-center rounded-md border-2 hover:border-secondary border-dashed border-gray-300 px-6 pt-5 pb-4">
