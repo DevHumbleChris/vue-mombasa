@@ -9,5 +9,5 @@
 }
 
 body {
-    background: '#f2f9f2';
+    @apply bg-gradient-to-r from-[#fdfbfb] to-[#e6f3e6];
 }

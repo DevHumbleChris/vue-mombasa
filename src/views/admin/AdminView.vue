@@ -1,5 +1,9 @@
-<script setup></script>
+<script setup>
+import SideBar from "./components/SideBar.vue"
+</script>
 
 <template>
-    <h1>Admin View</h1>
+    <main>
+        <SideBar />
+    </main>
 </template>
