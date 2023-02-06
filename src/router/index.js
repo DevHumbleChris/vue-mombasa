@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-// import { auth } from '@/firebaseConfig'
+import { auth } from '@/firebaseConfig'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,13 +27,27 @@ const router = createRouter({
       path: '/auth/signup',
       name: 'signup',
       component: () => import('../views/auth/SignupView.vue')
+    },
+    {
+      path:'/account/admin',
+      name: 'admin',
+      component: () => import("../views/admin/AdminView.vue"),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/account/member',
+      name: 'member',
+      component: () => import("../views/member/MemberView.vue"),
+      meta: { requiresAuth: true }
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
   const isUnderConstruction = to.matched.some(record => record.meta.isUnderConstruction)
-  // const isAuthenticated = auth.currentUser
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const isAuthenticated = auth.currentUser
+
   if (isUnderConstruction) next({ name: 'under-construction' })
   else next()
 })
